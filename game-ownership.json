@@ -1,7 +1,42 @@
 {
-  "Liam": [],
-  "TJ": [],
-  "Samantha": [],
-  "Cody": [],
-  "Blake": []
+  "Liam": {
+    "appIds": [],
+    "profile": {
+      "name": "Liam",
+      "avatar": "",
+      "profileUrl": ""
+    }
+  },
+  "TJ": {
+    "appIds": [],
+    "profile": {
+      "name": "TJ",
+      "avatar": "",
+      "profileUrl": ""
+    }
+  },
+  "Samantha": {
+    "appIds": [],
+    "profile": {
+      "name": "Samantha",
+      "avatar": "",
+      "profileUrl": ""
+    }
+  },
+  "Cody": {
+    "appIds": [],
+    "profile": {
+      "name": "Cody",
+      "avatar": "",
+      "profileUrl": ""
+    }
+  },
+  "Blake": {
+    "appIds": [],
+    "profile": {
+      "name": "Blake",
+      "avatar": "",
+      "profileUrl": ""
+    }
+  }
 }

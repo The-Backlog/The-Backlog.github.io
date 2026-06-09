@@ -32,6 +32,30 @@ async function getSteamID64FromVanityName(vanityName) {
   }
 }
 
+async function getPlayerSummary(steamID64) {
+  try {
+    const response = await axios.get(`${API_BASE}/ISteamUser/GetPlayerSummaries/v2/`, {
+      params: {
+        key: STEAM_API_KEY,
+        steamids: steamID64
+      }
+    });
+
+    if (response.data.response && response.data.response.players && response.data.response.players.length > 0) {
+      const player = response.data.response.players[0];
+      return {
+        name: player.personaname,
+        avatar: player.avatarmedium,
+        profileUrl: player.profileurl
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error(`Error fetching player summary for Steam ID ${steamID64}:`, error.message);
+    return null;
+  }
+}
+
 async function getOwnedGames(steamID64) {
   try {
     const response = await axios.get(`${API_BASE}/IPlayerService/GetOwnedGames/v1/`, {
@@ -56,17 +80,41 @@ async function generateOwnershipData() {
   console.log('Fetching Steam ownership data...\n');
 
   const ownershipMap = {};
+  const playerProfiles = {};
 
+  // First pass: get player summaries
   for (const [name, steamID] of Object.entries(STEAM_PROFILES)) {
     if (!steamID || steamID === '0') {
       console.log(`⚠️  Skipping ${name} - no Steam ID configured`);
       continue;
     }
 
+    console.log(`Fetching profile for ${name}...`);
+    try {
+      const playerSummary = await getPlayerSummary(steamID);
+      if (playerSummary) {
+        playerProfiles[name] = playerSummary;
+        console.log(`✓ Profile fetched: ${playerSummary.name}\n`);
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error(`✗ Error fetching profile for ${name}:`, error.message);
+    }
+  }
+
+  // Second pass: get owned games
+  for (const [name, steamID] of Object.entries(STEAM_PROFILES)) {
+    if (!steamID || steamID === '0') {
+      continue;
+    }
+
     console.log(`Fetching games for ${name}...`);
     try {
       const ownedAppIds = await getOwnedGames(steamID);
-      ownershipMap[name] = ownedAppIds;
+      ownershipMap[name] = {
+        appIds: ownedAppIds,
+        profile: playerProfiles[name] || {}
+      };
       console.log(`✓ ${name} owns ${ownedAppIds.length} games\n`);
 
       // Add a small delay to avoid rate limiting

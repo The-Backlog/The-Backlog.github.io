@@ -722,9 +722,14 @@ fetch('game-ownership.json')
 
 function getGameOwners(steamAppId) {
   const owners = [];
-  for (const [person, appIds] of Object.entries(ownershipData)) {
+  for (const [person, personData] of Object.entries(ownershipData)) {
+    const appIds = personData.appIds || [];
     if (appIds.includes(steamAppId)) {
-      owners.push(person);
+      owners.push({
+        name: person,
+        avatar: personData.profile?.avatar || '',
+        profileUrl: personData.profile?.profileUrl || ''
+      });
     }
   }
   return owners;
@@ -736,19 +741,26 @@ function renderGames(filter = {}) {
 
     const filtered = games.filter(game => {
         const gameOwners = getGameOwners(game.steamAppId);
+        const ownerNames = gameOwners.map(o => o.name);
         return (!filter.search || game.title.toLowerCase().includes(filter.search)) &&
             (!filter.suggestedBy || game.suggestedBy.includes(filter.suggestedBy)) &&
             (!filter.released || game.released.startsWith(filter.released)) &&
             (!filter.mode || game.genre.includes(filter.mode)) &&
             (!filter.genre || game.genre.includes(filter.genre)) &&
-            (!filter.ownedBy || gameOwners.includes(filter.ownedBy));
+            (!filter.ownedBy || ownerNames.includes(filter.ownedBy));
     });
 
     filtered.sort((a, b) => a.title.localeCompare(b.title));
 
   filtered.forEach(game => {
     const gameOwners = getGameOwners(game.steamAppId);
-    const ownersText = gameOwners.length > 0 ? gameOwners.join(", ") : "Not owned yet";
+    const ownersHtml = gameOwners.length > 0 
+      ? gameOwners.map(owner => `
+          <a href="${owner.profileUrl}" target="_blank" class="owner-avatar" title="${owner.name}">
+            <img src="${owner.avatar}" alt="${owner.name}" />
+          </a>
+        `).join('')
+      : '<span class="no-owners">Not owned yet</span>';
     
     const card = document.createElement("div");
     card.className = "game-card";
@@ -758,7 +770,12 @@ function renderGames(filter = {}) {
             <h3><span class="gold">${game.title}</span></h3>
             <p><strong>Suggested by:</strong> ${game.suggestedBy || "TBD"}</p>
             <p><strong>Released:</strong> ${game.released || "TBD"}</p>
-            <p><strong>Owned by:</strong> ${ownersText}</p>
+            <div class="owners-section">
+              <strong>Owned by:</strong>
+              <div class="owner-avatars">
+                ${ownersHtml}
+              </div>
+            </div>
         </div>
         <a class="btn-card" href="${game.link || '#'}" target="_blank">Learn More <span>↗</span></a>
     `;

@@ -665,6 +665,53 @@
         0 0 22px rgba(26, 159, 247, 0.5),
         0 16px 40px rgba(0, 0, 0, 0.9);
     }
+
+	/* Owner Avatars */
+	.owners-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.owner-avatars {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.owner-avatar {
+		display: inline-block;
+		position: relative;
+		text-decoration: none;
+		transition: transform 0.2s ease;
+	}
+
+	.owner-avatar:hover {
+		transform: scale(1.1);
+	}
+
+	.owner-avatar img {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		border: 2px solid rgba(26, 159, 247, 0.4);
+		display: block;
+		box-shadow: 0 0 10px rgba(26, 159, 247, 0.3);
+		transition: box-shadow 0.2s ease;
+	}
+
+	.owner-avatar:hover img {
+		box-shadow: 0 0 15px rgba(26, 159, 247, 0.6);
+	}
+
+	.no-owners {
+		color: var(--text-muted);
+		font-size: 0.85rem;
+		font-style: italic;
+	}
+
 	/* #endregion GameGrid */
 
 	/* #region Filters */
