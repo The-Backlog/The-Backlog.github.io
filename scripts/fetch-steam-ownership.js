@@ -6,7 +6,7 @@ const API_BASE = 'https://api.steampowered.com';
 
 // Steam profile configurations - maps display names to Steam IDs
 const STEAM_PROFILES = {
-  'Liam': '76561198869752571',      // Resolved from LiamWils20
+  'Liam': '76561198372734945',      // Resolved from LiamWils20
   'TJ': '76561199592608803',
   'Samantha': '76561199503509214',
   'Cody': '76561198886488879',
