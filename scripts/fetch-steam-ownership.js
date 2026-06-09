@@ -43,10 +43,12 @@ async function getPlayerSummary(steamID64) {
 
     if (response.data.response && response.data.response.players && response.data.response.players.length > 0) {
       const player = response.data.response.players[0];
+      // Use avatar_medium, fall back to avatarfull or avatarmedium, or construct from Steam ID
+      const avatar = player.avatarfull || player.avatar || `https://avatars.steamstatic.com/${steamID64}_medium.jpg`;
       return {
-        name: player.personaname,
-        avatar: player.avatarmedium,
-        profileUrl: player.profileurl
+        name: player.personaname || 'Unknown',
+        avatar: avatar,
+        profileUrl: player.profileurl || `https://steamcommunity.com/profiles/${steamID64}/`
       };
     }
     return null;
@@ -94,11 +96,27 @@ async function generateOwnershipData() {
       const playerSummary = await getPlayerSummary(steamID);
       if (playerSummary) {
         playerProfiles[name] = playerSummary;
-        console.log(`✓ Profile fetched: ${playerSummary.name}\n`);
+        console.log(`✓ Profile fetched: ${playerSummary.name}`);
+        console.log(`  Avatar URL: ${playerSummary.avatar.substring(0, 60)}...`);
+        console.log(`  Profile URL: ${playerSummary.profileUrl}\n`);
+      } else {
+        console.log(`⚠️  No profile data returned for ${name}, using fallback\n`);
+        // Fallback profile data
+        playerProfiles[name] = {
+          name: name,
+          avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
+          profileUrl: `https://steamcommunity.com/profiles/${steamID}/`
+        };
       }
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
       console.error(`✗ Error fetching profile for ${name}:`, error.message);
+      // Add fallback even on error
+      playerProfiles[name] = {
+        name: name,
+        avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
+        profileUrl: `https://steamcommunity.com/profiles/${steamID}/`
+      };
     }
   }
 
@@ -113,7 +131,11 @@ async function generateOwnershipData() {
       const ownedAppIds = await getOwnedGames(steamID);
       ownershipMap[name] = {
         appIds: ownedAppIds,
-        profile: playerProfiles[name] || {}
+        profile: playerProfiles[name] || {
+          name: name,
+          avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
+          profileUrl: `https://steamcommunity.com/profiles/${steamID}/`
+        }
       };
       console.log(`✓ ${name} owns ${ownedAppIds.length} games\n`);
 
@@ -121,12 +143,22 @@ async function generateOwnershipData() {
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
       console.error(`✗ Error fetching games for ${name}:`, error.message);
+      // Still add entry even if games fetch fails
+      ownershipMap[name] = {
+        appIds: [],
+        profile: playerProfiles[name] || {
+          name: name,
+          avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
+          profileUrl: `https://steamcommunity.com/profiles/${steamID}/`
+        }
+      };
     }
   }
 
   // Write the ownership map to JSON file
   fs.writeFileSync('game-ownership.json', JSON.stringify(ownershipMap, null, 2));
   console.log('\n✓ Ownership data saved to game-ownership.json');
+  console.log(`\nSummary: ${Object.keys(ownershipMap).length} profiles processed`);
 }
 
 generateOwnershipData().catch(error => {

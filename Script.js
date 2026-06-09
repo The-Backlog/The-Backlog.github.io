@@ -713,12 +713,25 @@ games.forEach(game => {
 // Load ownership data
 let ownershipData = {};
 fetch('game-ownership.json')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  })
   .then(data => {
     ownershipData = data;
+    console.log('✓ Ownership data loaded:', ownershipData);
+    // Debug: log first owner's avatar
+    const firstOwner = Object.entries(ownershipData)[0];
+    if (firstOwner) {
+      console.log(`First owner (${firstOwner[0]}):`, firstOwner[1]);
+      console.log(`Avatar URL: ${firstOwner[1].profile?.avatar}`);
+    }
     renderGames();
   })
-  .catch(error => console.warn('Could not load ownership data:', error));
+  .catch(error => {
+    console.error('✗ Error loading ownership data:', error);
+    renderGames(); // Still render games even if ownership data fails
+  });
 
 function getGameOwners(steamAppId) {
   const owners = [];
@@ -757,7 +770,7 @@ function renderGames(filter = {}) {
     const ownersHtml = gameOwners.length > 0 
       ? gameOwners.map(owner => `
           <a href="${owner.profileUrl}" target="_blank" class="owner-avatar" title="${owner.name}">
-            <img src="${owner.avatar}" alt="${owner.name}" />
+            <img src="${owner.avatar}" alt="${owner.name}" onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_medium.jpg'" />
           </a>
         `).join('')
       : '<span class="no-owners">Not owned yet</span>';
