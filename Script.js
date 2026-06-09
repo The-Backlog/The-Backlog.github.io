@@ -689,7 +689,14 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/3688240/Pipesexe/",
       cover: "images/Pipes.jpg",
     },
-    
+    // 7 Days to Die
+    { title: "7 Days to Die",
+      suggestedBy: "Samantha",
+      released: "Yes!",
+      genre: ["Adventure"],
+      link: "steam://openurl/https://store.steampowered.com/app/251570/7_Days_to_Die/",
+      cover: "images/7 Days to Die.jpg",
+    },
 ];
 
 // Extract Steam App ID from link
