@@ -10,7 +10,7 @@ const STEAM_PROFILES = {
   'TJ': '76561199592608803',
   'Samantha': '76561199503509214',
   'Cody': '76561198886488879',
-  'Blake': '0'  // Add Blake's Steam ID here if available
+  'Blake': '76561199595551635' 
 };
 
 async function getSteamID64FromVanityName(vanityName) {
