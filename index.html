@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Backlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="images/Logo.png">
+  
+  <link rel="stylesheet" href="css/Style.css">
+</head>
+<body>
+  <div class="frame">
+	<section class="filters">
+        <input type="text" id="search" placeholder="Search games..." />
+        <select id="suggestedBy">
+            <option value="">Suggested by</option>
+            <option value="Liam">Liam</option>
+            <option value="TJ">TJ</option>
+            <option value="Samantha">Samantha</option>
+            <option value="Cody">Cody</option>
+        </select>
+        <select id="released">
+            <option value="">Released?</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+        <select id="mode">
+            <option value="">Mode</option>
+            <option value="Single-player">Single-player</option>
+            <option value="Online Co-op">Online Co-op</option>
+            <option value="Multiplayer">Multiplayer</option>
+        </select>
+        <select id="genre">
+            <option value="">Genre</option>
+            <option value="Action">Action</option>
+            <option value="Survival">Survival</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Horror">Horror</option>
+            <option value="Puzzle">Puzzle</option>
+            <option value="RPG">RPG</option>
+            <option value="Platformer">Platformer</option>
+            <option value="Indie">Indie</option>
+            <option value="Racing">Racing</option>
+            <option value="Simulation">Simulation</option>
+            <option value="Strategy">Strategy</option>
+            <option value="Sports">Sports</option>
+        </select>
+    </section>
+
+  	<section class="game-grid" id="gameGrid">
+    	<!-- Cards will be injected here -->
+  	</section>
+	
+    <footer>
+      	<div>
+        	© <span id="year"></span> Liam · Game Developer
+      	</div>
+      	<div class="footer-links" id="contact">
+        	<a href="mailto:wliam4410@gmail.com">Email</a>
+        	<a href="https://liamwils20.itch.io">itch.io</a>
+        	<a href=""></a>
+      	</div>
+    </footer>
+</div>
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+  	<script src="Script.js"></script>
+</body>
+</html>
