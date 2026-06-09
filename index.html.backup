@@ -45,14 +45,6 @@
             <option value="Strategy">Strategy</option>
             <option value="Sports">Sports</option>
         </select>
-        <select id="ownedBy">
-            <option value="">Owned by</option>
-            <option value="Liam">Liam</option>
-            <option value="TJ">TJ</option>
-            <option value="Samantha">Samantha</option>
-            <option value="Cody">Cody</option>
-            <option value="Blake">Blake</option>
-        </select>
     </section>
 
   	<section class="game-grid" id="gameGrid">

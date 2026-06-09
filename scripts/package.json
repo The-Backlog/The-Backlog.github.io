@@ -1,0 +1,15 @@
+{
+  "name": "the-backlog-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for The Backlog game site",
+  "main": "fetch-steam-ownership.js",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "scripts": {
+    "fetch-ownership": "node fetch-steam-ownership.js"
+  },
+  "keywords": ["steam", "games"],
+  "author": "The Backlog",
+  "license": "MIT"
+}

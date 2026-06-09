@@ -1,0 +1,32 @@
+name: Update Game Ownership Data
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-ownership:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install axios
+
+      - name: Fetch Steam ownership data
+        run: node scripts/fetch-steam-ownership.js
+        env:
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add game-ownership.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update game ownership data [skip ci]" && git push)

@@ -699,57 +699,21 @@ const games = [
     },
 ];
 
-// Extract Steam App ID from link
-function extractSteamAppId(link) {
-  const match = link.match(/\/app\/(\d+)/);
-  return match ? parseInt(match[1]) : null;
-}
-
-// Add steamAppId to each game
-games.forEach(game => {
-  game.steamAppId = extractSteamAppId(game.link);
-});
-
-// Load ownership data
-let ownershipData = {};
-fetch('game-ownership.json')
-  .then(response => response.json())
-  .then(data => {
-    ownershipData = data;
-    renderGames();
-  })
-  .catch(error => console.warn('Could not load ownership data:', error));
-
-function getGameOwners(steamAppId) {
-  const owners = [];
-  for (const [person, appIds] of Object.entries(ownershipData)) {
-    if (appIds.includes(steamAppId)) {
-      owners.push(person);
-    }
-  }
-  return owners;
-}
-
 function renderGames(filter = {}) {
   const grid = document.getElementById("gameGrid");
   grid.innerHTML = "";
 
     const filtered = games.filter(game => {
-        const gameOwners = getGameOwners(game.steamAppId);
         return (!filter.search || game.title.toLowerCase().includes(filter.search)) &&
             (!filter.suggestedBy || game.suggestedBy.includes(filter.suggestedBy)) &&
             (!filter.released || game.released.startsWith(filter.released)) &&
             (!filter.mode || game.genre.includes(filter.mode)) &&
-            (!filter.genre || game.genre.includes(filter.genre)) &&
-            (!filter.ownedBy || gameOwners.includes(filter.ownedBy));
+            (!filter.genre || game.genre.includes(filter.genre));
     });
 
     filtered.sort((a, b) => a.title.localeCompare(b.title));
 
   filtered.forEach(game => {
-    const gameOwners = getGameOwners(game.steamAppId);
-    const ownersText = gameOwners.length > 0 ? gameOwners.join(", ") : "Not owned yet";
-    
     const card = document.createElement("div");
     card.className = "game-card";
     card.innerHTML = `
@@ -758,7 +722,7 @@ function renderGames(filter = {}) {
             <h3><span class="gold">${game.title}</span></h3>
             <p><strong>Suggested by:</strong> ${game.suggestedBy || "TBD"}</p>
             <p><strong>Released:</strong> ${game.released || "TBD"}</p>
-            <p><strong>Owned by:</strong> ${ownersText}</p>
+            
         </div>
         <a class="btn-card" href="${game.link || '#'}" target="_blank">Learn More <span>↗</span></a>
     `;
@@ -775,7 +739,6 @@ document.querySelectorAll(".filters input, .filters select").forEach(el => {
       released: document.getElementById("released").value,
       mode: document.getElementById("mode").value,
       genre: document.getElementById("genre").value,
-      ownedBy: document.getElementById("ownedBy") ? document.getElementById("ownedBy").value : "",
     });
   });
 });
