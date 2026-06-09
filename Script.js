@@ -625,14 +625,6 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/2708860/Canyons/",
       cover: "images/Canyons.jpg",
     },
-    // Arena Breakout Infinite
-    { title: "Arena Breakout Infinite",
-      suggestedBy: "Liam & Cody",
-      released: "Yes!",
-      genre: ["Action", "Adventure", "Massively Multiplayer", "RPG", "Strategy", "Free To Play"],
-      link: "steam://openurl/https://store.steampowered.com/app/2073620/Arena_Breakout_Infinite/",
-      cover: "images/Arena Breakout Infinite.jpg",
-    },
     // Expresslane
     { title: "ExpressLane",
       suggestedBy: "Liam",
