@@ -694,7 +694,7 @@ const games = [
       suggestedBy: "Everyone",
       released: "Yes!",
       genre: ["Action", "Adventure", "RPG"],
-      link: "steam://openurl/https://store.steampowered.com/app/2004680/7_Days_to_Die/",
+      link: "steam://openurl/https://store.steampowered.com/app/251570/7_Days_to_Die/",
       cover: "images/7 Days to Die.jpg",
     },
     // Voidling Bound
