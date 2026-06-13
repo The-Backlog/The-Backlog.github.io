@@ -750,6 +750,72 @@ games.forEach(game => {
   game.steamAppId = extractSteamAppId(game.link);
 });
 
+// Sunday Release Check - automatically update "No!" games to "Yes!" when released
+async function checkForReleasedGames() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday
+  const lastCheckKey = 'gameReleaseCheckDate';
+  const lastCheckDate = localStorage.getItem(lastCheckKey);
+  
+  // Only run on Sundays or if it's been 7+ days since last check
+  const isToday = lastCheckDate ? new Date(lastCheckDate).toDateString() === today.toDateString() : false;
+  const isWeekOverdue = !lastCheckDate || (today - new Date(lastCheckDate)) > 7 * 24 * 60 * 60 * 1000;
+  
+  if (dayOfWeek !== 0 && !isWeekOverdue) {
+    console.log('Next release check scheduled for Sunday');
+    return;
+  }
+  
+  if (isToday) {
+    console.log('Release check already performed today');
+    return;
+  }
+  
+  console.log('🔄 Starting weekly release check...');
+  localStorage.setItem(lastCheckKey, today.toISOString());
+  
+  // Find all games marked as "No!" (not yet released)
+  const unreleased = games.filter(game => game.released.startsWith('No!'));
+  
+  for (const game of unreleased) {
+    if (!game.steamAppId) continue;
+    
+    try {
+      const response = await fetch(
+        `https://store.steampowered.com/api/appdetails?appids=${game.steamAppId}&cc=US`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      const data = await response.json();
+      
+      if (data[game.steamAppId]?.success && data[game.steamAppId].data) {
+        const appData = data[game.steamAppId].data;
+        
+        // Check if game is released (has a release_date and it's in the past)
+        if (appData.release_date) {
+          const releaseDate = new Date(appData.release_date.date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Reset time to start of day for fair comparison
+          
+          if (releaseDate <= today) {
+            console.log(`✓ ${game.title} is now released!`);
+            game.released = 'Yes!';
+          }
+        }
+      }
+    } catch (error) {
+      console.warn(`Could not check ${game.title}:`, error);
+    }
+    
+    // Small delay to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 300));
+  }
+  
+  console.log('✓ Weekly release check complete');
+  
+  // Re-render to show any updates
+  renderGames();
+}
+
 // Load ownership data
 let ownershipData = {};
 fetch('game-ownership.json')
@@ -767,10 +833,16 @@ fetch('game-ownership.json')
       console.log(`Avatar URL: ${firstOwner[1].profile?.avatar}`);
     }
     renderGames();
+    
+    // Check for newly released games (runs on Sundays or weekly)
+    checkForReleasedGames();
   })
   .catch(error => {
     console.error('✗ Error loading ownership data:', error);
     renderGames(); // Still render games even if ownership data fails
+    
+    // Still check for released games even if ownership fails
+    checkForReleasedGames();
   });
 
 function getGameOwners(steamAppId) {
