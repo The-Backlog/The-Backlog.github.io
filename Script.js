@@ -729,6 +729,14 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/3524720/HAEX/",
       cover: "images/HAEX.jpg",
     },
+    // Witchspire
+    { title: "Witchspire",
+      suggestedBy: "Liam",
+      released: "Yes!",
+      genre: ["Action", "Early Access"],
+      link: "steam://openurl/https://store.steampowered.com/app/3156770/Witchfire/",
+      cover: "images/Witchspire.jpg",
+    },
 ];
 
 // Extract Steam App ID from link
