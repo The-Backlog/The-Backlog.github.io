@@ -745,6 +745,14 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/4687500/Crossfire/",
       cover: "images/Crossfire.jpg",
     },
+    // Global Rescue
+    { title: "Global Rescue",
+      suggestedBy: "Liam",
+      released: "Yes!",
+      genre: ["Simulation", "Strategy", "Early Access"],
+      link: "steam://openurl/https://store.steampowered.com/app/2873660/Global_Rescue/",
+      cover: "images/Global Rescue.jpg",
+    },
 ];
 
 // Extract Steam App ID from link
