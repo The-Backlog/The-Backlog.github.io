@@ -737,6 +737,14 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/3156770/Witchfire/",
       cover: "images/Witchspire.jpg",
     },
+    // Crossfire
+    { title: "Crossfire",
+      suggestedBy: "Samantha",
+      released: "No!",
+      genre: ["Action", "Adventure"],
+      link: "steam://openurl/https://store.steampowered.com/app/4687500/Crossfire/",
+      cover: "images/Crossfire.jpg",
+    },
 ];
 
 // Extract Steam App ID from link
