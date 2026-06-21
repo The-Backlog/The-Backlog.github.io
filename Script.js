@@ -753,6 +753,22 @@ const games = [
       link: "steam://openurl/https://store.steampowered.com/app/2873660/Global_Rescue/",
       cover: "images/Global Rescue.jpg",
     },
+    // Meccha Chameleon
+    { title: "Meccha Chameleon",
+      suggestedBy: "Everyone",
+      released: "Yes!",
+      genre: ["Casual"],
+      link: "steam://openurl/https://store.steampowered.com/app/4704690/MECCHA_CHAMELEON/",
+      cover: "images/Meccha Chameleon.jpg",
+    },
+    // Commie Bobrs
+    { title: "Commie Bobrs",
+      suggestedBy: "Samantha",
+      released: "No!",
+      genre: ["Adventure", "Simulation"],
+      link: "steam://openurl/https://store.steampowered.com/app/4518240/Commie_Bobrs/",
+      cover: "images/Commie Bobrs.jpg",
+    },
 ];
 
 // Extract Steam App ID from link
