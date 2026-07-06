@@ -1,5 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
+const path = require('path');
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
 const API_BASE = 'https://api.steampowered.com';
@@ -112,7 +113,8 @@ function getTrackedAppIdsFromScript(scriptPath) {
 async function generateOwnershipData() {
   console.log('Fetching Steam ownership data...\n');
 
-  const trackedAppIds = getTrackedAppIdsFromScript('../Script.js');
+  const rootScriptPath = path.resolve(__dirname, '..', 'Script.js');
+  const trackedAppIds = getTrackedAppIdsFromScript(rootScriptPath);
   const trackedAppIdSet = new Set(trackedAppIds);
   console.log(`Tracking ${trackedAppIds.length} app IDs from Script.js\n`);
 
