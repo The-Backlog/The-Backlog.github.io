@@ -706,6 +706,19 @@
 		box-shadow: 0 0 15px rgba(26, 159, 247, 0.6);
 	}
 
+  .owner-avatar.perfected img {
+    border-color: rgba(255, 215, 0, 0.9);
+    box-shadow:
+      0 0 10px rgba(255, 215, 0, 0.55),
+      0 0 18px rgba(255, 184, 28, 0.45);
+  }
+
+  .owner-avatar.perfected:hover img {
+    box-shadow:
+      0 0 14px rgba(255, 215, 0, 0.75),
+      0 0 24px rgba(255, 184, 28, 0.6);
+  }
+
 	.no-owners {
 		color: var(--text-muted);
 		font-size: 0.85rem;
