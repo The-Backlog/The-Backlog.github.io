@@ -81,7 +81,7 @@ async function getOwnedGames(steamID64) {
 
 async function hasCompletedAllAchievements(steamID64, appId) {
   try {
-    const response = await axios.get(`${API_BASE}/ISteamUserStats/GetPlayerAchievements/v1/`, {
+    const response = await axios.get(`${API_BASE}/ISteamUserStats/GetPlayerAchievements/v0001/`, {
       params: {
         key: STEAM_API_KEY,
         steamid: steamID64,
@@ -90,6 +90,10 @@ async function hasCompletedAllAchievements(steamID64, appId) {
     });
 
     const playerstats = response.data?.playerstats;
+    if (!playerstats || playerstats.success === false) {
+      return false;
+    }
+
     const achievements = playerstats?.achievements;
 
     // If a game has no achievements, or they are not publicly available, it cannot be "perfected".
@@ -97,7 +101,7 @@ async function hasCompletedAllAchievements(steamID64, appId) {
       return false;
     }
 
-    return achievements.every(achievement => achievement.achieved === 1);
+    return achievements.every(achievement => achievement.achieved === 1 || achievement.achieved === true);
   } catch (error) {
     // Steam returns errors for private data, missing stats, or unsupported apps; treat as not perfected.
     return false;
