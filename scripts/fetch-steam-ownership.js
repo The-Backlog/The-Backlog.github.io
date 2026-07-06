@@ -1,6 +1,5 @@
 const axios = require('axios');
 const fs = require('fs');
-const path = require('path');
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
 const API_BASE = 'https://api.steampowered.com';
@@ -79,49 +78,8 @@ async function getOwnedGames(steamID64) {
   }
 }
 
-async function getPlayerAchievements(steamID64, appId) {
-  try {
-    const response = await axios.get(`${API_BASE}/ISteamUserStats/GetPlayerAchievements/v1/`, {
-      params: {
-        key: STEAM_API_KEY,
-        steamid: steamID64,
-        appid: appId
-      }
-    });
-
-    return response.data?.playerstats || null;
-  } catch (error) {
-    console.error(`Error fetching achievements for Steam ID ${steamID64}, app ${appId}:`, error.message);
-    return null;
-  }
-}
-
-async function hasCompletedAllAchievements(steamID64, appId) {
-  const playerStats = await getPlayerAchievements(steamID64, appId);
-  if (!playerStats?.success || !Array.isArray(playerStats.achievements) || playerStats.achievements.length === 0) {
-    return false;
-  }
-
-  return playerStats.achievements.every(achievement => achievement.achieved === 1);
-}
-
-function getTrackedAppIdsFromScript(scriptFilePath) {
-  try {
-    const scriptContent = fs.readFileSync(scriptFilePath, 'utf8');
-    const appIdMatches = [...scriptContent.matchAll(/\/app\/(\d+)/g)];
-    return [...new Set(appIdMatches.map(match => Number.parseInt(match[1], 10)))];
-  } catch (error) {
-    console.error('Error reading Script.js to build tracked app list:', error.message);
-    return [];
-  }
-}
-
 async function generateOwnershipData() {
   console.log('Fetching Steam ownership data...\n');
-
-  const scriptPath = path.resolve(__dirname, '..', 'Script.js');
-  const trackedAppIds = getTrackedAppIdsFromScript(scriptPath);
-  console.log(`Tracking achievement completion for ${trackedAppIds.length} listed games.\n`);
 
   const ownershipMap = {};
   const playerProfiles = {};
@@ -171,34 +129,15 @@ async function generateOwnershipData() {
     console.log(`Fetching games for ${name}...`);
     try {
       const ownedAppIds = await getOwnedGames(steamID);
-
-      const trackedOwnedAppIds = ownedAppIds.filter(appId => trackedAppIds.includes(appId));
-      const completedAppIds = [];
-
-      if (trackedOwnedAppIds.length > 0) {
-        console.log(`Checking all-achievement completion for ${trackedOwnedAppIds.length} tracked owned games...`);
-      }
-
-      for (const appId of trackedOwnedAppIds) {
-        const hasPerfectedGame = await hasCompletedAllAchievements(steamID, appId);
-        if (hasPerfectedGame) {
-          completedAppIds.push(appId);
-        }
-
-        // Tiny delay to reduce rate limiting risk when checking many games.
-        await new Promise(resolve => setTimeout(resolve, 250));
-      }
-
       ownershipMap[name] = {
         appIds: ownedAppIds,
-        completedAppIds,
         profile: playerProfiles[name] || {
           name: name,
           avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
           profileUrl: `https://steamcommunity.com/profiles/${steamID}/`
         }
       };
-      console.log(`✓ ${name} owns ${ownedAppIds.length} games (${completedAppIds.length} perfected tracked games)\n`);
+      console.log(`✓ ${name} owns ${ownedAppIds.length} games\n`);
 
       // Add a small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -207,7 +146,6 @@ async function generateOwnershipData() {
       // Still add entry even if games fetch fails
       ownershipMap[name] = {
         appIds: [],
-        completedAppIds: [],
         profile: playerProfiles[name] || {
           name: name,
           avatar: `https://avatars.steamstatic.com/${steamID}_medium.jpg`,
