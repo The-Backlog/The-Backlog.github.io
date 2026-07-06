@@ -810,10 +810,13 @@ function getGameOwners(steamAppId) {
   for (const [person, personData] of Object.entries(ownershipData)) {
     const appIds = personData.appIds || [];
     if (appIds.includes(steamAppId)) {
+      const completedAppIds = personData.completedAppIds || [];
+      const hasPerfectedGame = completedAppIds.includes(steamAppId);
       owners.push({
         name: person,
         avatar: personData.profile?.avatar || '',
-        profileUrl: personData.profile?.profileUrl || ''
+        profileUrl: personData.profile?.profileUrl || '',
+        hasPerfectedGame
       });
     }
   }
@@ -841,7 +844,7 @@ function renderGames(filter = {}) {
     const gameOwners = getGameOwners(game.steamAppId);
     const ownersHtml = gameOwners.length > 0 
       ? gameOwners.map(owner => `
-          <a href="${owner.profileUrl}" target="_blank" class="owner-avatar" title="${owner.name}">
+          <a href="${owner.profileUrl}" target="_blank" class="owner-avatar${owner.hasPerfectedGame ? ' perfected' : ''}" title="${owner.name}${owner.hasPerfectedGame ? ' - Completed all achievements' : ''}">
             <img src="${owner.avatar}" alt="${owner.name}" onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_medium.jpg'" />
           </a>
         `).join('')
